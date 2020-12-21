@@ -1,12 +1,12 @@
 const TelegramBot = require('node-telegram-bot-api');
 const api = require('./api');
+const utils = require('./utils');
 
 const botToken = '1473468969:AAHK6sDfupFxXLGGuT3StjIv6DsckX4A1ns';
 const bot = new TelegramBot(botToken, {polling: true});
 
-
 const getLastSubgraphsInfo = () => api.getSubgraphs().then(response => {
-  if (response.data.data) {
+  if (!response.data.error) {
     const message = '*Last deployed subgraphs:*\n\n' +
       response.data.data.communitySubgraphs.subgraphs.map(
         info => `${info.displayName}, ${new Intl.DateTimeFormat('en').format(new Date(info.deployedAt))}`
@@ -17,8 +17,45 @@ const getLastSubgraphsInfo = () => api.getSubgraphs().then(response => {
   return 'Sorry, server is not available';
 });
 
+const getSubgraphsCountInfo = () => api.getSubgraphsCount().then(response => {
+  if (!response.data.error) {
+    return  '*Total deployed subgraphs:* ' + response.data.data.communitySubgraphs.totalCount;
+  }
+  return 'Sorry, server is not available';
+}).catch((response) => console.log(response.data));
+
+
+const getIndexersInfo = () => api.getIndexers().then(response => {
+  if (!response.data.error) {
+    console.log(response.data.data);
+    const message = '*Indexers:*\n\n' +
+      response.data.data.indexers.map(
+        info => `[${info.id}](${info.url})\n` +
+        `Owned: ${utils.abbreviateNumber(info.stakedTokens)}\n` +
+        `Fee cut: ${info.queryFeeCut / 1000}%\n` +
+        `Reward cut: ${info.indexingRewardCut / 1000}%\n` +
+        `Delegates: ${utils.abbreviateNumber(info.delegatedTokens)}\n` +
+        `Indexer Rewards: ${utils.abbreviateNumber(info.rewardsEarned)}\n`
+      ).join('\n');
+
+    return utils.escapeMsg(message);
+  }
+  return 'Sorry, server is not available';
+});
+
+const getGRTPiceInfo = () => api.getGRTPrice().then(response => {
+  if (!response.data.error) {
+    console.log(response.data.price);
+    return '*Current GRT cost:* ' +  utils.escapeMsg(parseFloat(response.data.price).toFixed(5)) + ' USD';
+  }
+  return 'Sorry, server is not available';
+});
+
 const requestFunctionMap = {
-  'last subgraphs': getLastSubgraphsInfo
+  'last subgraphs': getLastSubgraphsInfo,
+  'grt cost': getGRTPiceInfo,
+  'total subgraphs': getSubgraphsCountInfo,
+  'indexers': getIndexersInfo
 }
 
 bot.onText(/\/get (.+)/, (msg, match) => {
@@ -26,7 +63,7 @@ bot.onText(/\/get (.+)/, (msg, match) => {
     const requestName = match[1];
 
     const requestFunc = requestFunctionMap[requestName];
-    
+
     if (requestFunc) {
       requestFunc().then(message => {
         console.log(message);
