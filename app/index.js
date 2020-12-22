@@ -80,7 +80,7 @@ bot.onText(/\/help/, (msg, match) => {
     `*\\/help* \\- Show all available commands\n` +
     `*\\/get total subgraphs* \\- Show total deployed subgraphs\n` +
     `*\\/get last subgraphs* \\- Show last 5 deployed subgraphs\n` +
-    `*\\/get indexers* \\- Show 20 indexers^ sorted by deposited stake\n` +
+    `*\\/get indexers* \\- Show 20 indexers sorted by deposited stake\n` +
     `*\\/get grt* \\- show current GRT/USD exchange rate `
 
 
