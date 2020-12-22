@@ -2,7 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const api = require('./api');
 const utils = require('./utils');
 
-const botToken = '1473468969:AAHK6sDfupFxXLGGuT3StjIv6DsckX4A1ns';
+const botToken = '1465038390:AAFf-8lbhbW--32qo5VC7dtP-g9VBWW2aYk';
 const bot = new TelegramBot(botToken, {polling: true});
 
 const getLastSubgraphsInfo = () => api.getSubgraphs().then(response => {
