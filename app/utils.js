@@ -1,13 +1,12 @@
 const escapeMsg = (msg) => msg
-  .replace("_", "\\_")
-  .replace("*", "\\*")
-  .replace("`", "\\`")
-  .replace(".", "\\.");
+  .replace(/_/g, "\\_")
+  .replace(/`/g, "\\`")
+  .replace(/\./g, "\\.");
 
-var SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
+const SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
 
-function abbreviateNumber(number){
-  number = parseInt(number);
+const abbreviateNumber = (number) => {
+  number = parseInt(number) / Math.pow(10, 18); // Math.pow(10, 18) for handle strange response numbers
   const tier = Math.log10(number) / 3 | 0;
 
   if (tier === 0) return number;

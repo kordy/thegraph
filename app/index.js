@@ -27,14 +27,14 @@ const getSubgraphsCountInfo = () => api.getSubgraphsCount().then(response => {
 
 const getIndexersInfo = () => api.getIndexers().then(response => {
   if (!response.data.error) {
-    console.log(response.data.data);
+
     const message = '*Indexers:*\n\n' +
       response.data.data.indexers.map(
         info => `[${info.id}](${info.url})\n` +
-        `Owned: ${utils.abbreviateNumber(info.stakedTokens)}\n` +
-        `Fee cut: ${info.queryFeeCut / 1000}%\n` +
-        `Reward cut: ${info.indexingRewardCut / 1000}%\n` +
-        `Delegates: ${utils.abbreviateNumber(info.delegatedTokens)}\n` +
+        `Owned: ${utils.abbreviateNumber(info.stakedTokens)} GRT\n` +
+        `Fee cut: ${info.queryFeeCut / 10000}%\n` +
+        `Reward cut: ${info.indexingRewardCut / 10000}%\n` +
+        `Delegates: ${utils.abbreviateNumber(info.delegatedTokens)} GRT\n` +
         `Indexer Rewards: ${utils.abbreviateNumber(info.rewardsEarned)}\n`
       ).join('\n');
 
@@ -45,7 +45,6 @@ const getIndexersInfo = () => api.getIndexers().then(response => {
 
 const getGRTPiceInfo = () => api.getGRTPrice().then(response => {
   if (!response.data.error) {
-    console.log(response.data.price);
     return '*Current GRT cost:* ' +  utils.escapeMsg(parseFloat(response.data.price).toFixed(5)) + ' USD';
   }
   return 'Sorry, server is not available';
@@ -53,7 +52,7 @@ const getGRTPiceInfo = () => api.getGRTPrice().then(response => {
 
 const requestFunctionMap = {
   'last subgraphs': getLastSubgraphsInfo,
-  'grt cost': getGRTPiceInfo,
+  'grt': getGRTPiceInfo,
   'total subgraphs': getSubgraphsCountInfo,
   'indexers': getIndexersInfo
 }
